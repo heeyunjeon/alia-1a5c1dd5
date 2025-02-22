@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import * as fal from "@fal-ai/serverless-client";
 
 export default function CollabPage() {
   const { brandName } = useParams();
@@ -28,14 +28,32 @@ export default function CollabPage() {
     setIsProcessing(true);
     toast.loading("Transforming your image into video...");
     
-    // Here we'll add the API call to transform the image
-    // For now, just simulate the process
-    setTimeout(() => {
+    try {
+      // Configure Fal AI client
+      fal.config({
+        credentials: process.env.FAL_AI_KEY,
+      });
+
+      // Call the image-to-video endpoint
+      const result = await fal.run('image-to-video', {
+        input: {
+          image_url: selectedImage,
+          num_frames: 30,
+        },
+      });
+
+      if (result.video) {
+        setVideoUrl(result.video);
+        toast.success("Video created successfully!");
+      } else {
+        throw new Error("No video generated");
+      }
+    } catch (error) {
+      console.error("Error transforming image:", error);
+      toast.error("Failed to transform image to video. Please try again.");
+    } finally {
       setIsProcessing(false);
-      toast.success("Video created successfully!");
-      // Set a placeholder video URL - this will be replaced with the actual API response
-      setVideoUrl("https://example.com/video.mp4");
-    }, 2000);
+    }
   };
 
   return (
