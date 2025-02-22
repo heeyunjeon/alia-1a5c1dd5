@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const mockBrands = [
   {
@@ -39,6 +40,7 @@ const mockBrands = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -57,16 +59,33 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100">
       {!hasCompletedOnboarding ? (
-        <OnboardingFlow onComplete={handleOnboardingComplete} />
+        <div className="p-4">
+          <Button 
+            variant="outline" 
+            className="mb-4"
+            onClick={() => navigate("/auth")}
+          >
+            Sign In / Sign Up
+          </Button>
+          <OnboardingFlow onComplete={handleOnboardingComplete} />
+        </div>
       ) : (
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col gap-6">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-bold">Brand Collaborations</h1>
-              <Button variant="outline">
-                <SlidersHorizontal className="h-4 w-4 mr-2" />
-                Filters
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline"
+                  onClick={() => navigate("/auth")}
+                >
+                  Sign In / Sign Up
+                </Button>
+                <Button variant="outline">
+                  <SlidersHorizontal className="h-4 w-4 mr-2" />
+                  Filters
+                </Button>
+              </div>
             </div>
 
             <div className="flex gap-4 flex-wrap md:flex-nowrap">
