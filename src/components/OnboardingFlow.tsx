@@ -11,6 +11,8 @@ interface OnboardingFlowProps {
   onComplete: (category: string) => void;
 }
 
+type InfluencerCategory = "Lifestyle" | "Fashion" | "Tech" | "Beauty";
+
 const steps = [
   {
     title: "Welcome",
@@ -33,7 +35,7 @@ const steps = [
 export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<InfluencerCategory | null>(null);
   const [socialMedia, setSocialMedia] = useState({
     instagram: "",
     tiktok: "",
@@ -81,10 +83,10 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
     try {
       const { error } = await supabase.from("influencer_profiles").insert({
         id: session.user.id,
-        category: selectedCategory,
-        instagram_username: socialMedia.instagram,
-        tiktok_username: socialMedia.tiktok,
-        youtube_channel: socialMedia.youtube,
+        category: selectedCategory as InfluencerCategory,
+        instagram_username: socialMedia.instagram || null,
+        tiktok_username: socialMedia.tiktok || null,
+        youtube_channel: socialMedia.youtube || null,
       });
 
       if (error) throw error;
