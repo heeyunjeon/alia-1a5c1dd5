@@ -81,9 +81,9 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
     if (!selectedCategory || !session?.user) return;
 
     try {
-      const { error } = await supabase.from("influencer_profiles").insert({
+      const { error } = await supabase.from("influencer_profiles").upsert({
         id: session.user.id,
-        category: selectedCategory as InfluencerCategory,
+        category: selectedCategory,
         instagram_username: socialMedia.instagram || null,
         tiktok_username: socialMedia.tiktok || null,
         youtube_channel: socialMedia.youtube || null,
@@ -91,10 +91,10 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
 
       if (error) throw error;
 
-      toast.success("Profile created successfully!");
+      toast.success("Profile updated successfully!");
       onComplete(selectedCategory.toLowerCase());
     } catch (error: any) {
-      toast.error("Failed to create profile: " + error.message);
+      toast.error("Failed to update profile: " + error.message);
     }
   };
 
