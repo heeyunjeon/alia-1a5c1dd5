@@ -9,41 +9,16 @@ export interface FalVideoResponse {
 }
 
 export async function configureFalAI() {
-  const { data, error: secretError } = await supabase
-    .rpc('get_service_secret', { secret_name: 'FAL_AI_KEY' }) as {
-      data: { secret: string } | null;
-      error: Error | null;
-    };
-
-  if (secretError || !data?.secret) {
-    throw new Error('Failed to get FAL AI API key');
-  }
-
-  // Configure FAL AI with the credentials
-  (fal.default as any).config({
-    credentials: data.secret,
-  });
+  // For demo purposes, we'll just return without configuring FAL AI
+  return;
 }
 
 export async function transformImageToVideo(base64Image: string, brandName: string): Promise<FalVideoResponse> {
-  console.log('Calling FAL AI with image data...');
+  console.log('Using demo video...');
   
-  // Generate the prompt with the dynamic brand name
-  const prompt = `a beautiful skinny influencer with a flawless glowing skin is talking about her '${brandName}' to post on tiktok at her luxury high-rise apartment that overlooks Central Park Manhattan that is modern and tech-savvy`;
-  
-  const result = await fal.subscribe("fal-ai/kling-video/v1.6/pro/image-to-video", {
-    input: {
-      prompt: prompt,
-      image_url: base64Image,
-    },
-    logs: true,
-    onQueueUpdate: (update) => {
-      if (update.status === "IN_PROGRESS") {
-        update.logs?.map((log) => log.message).forEach(console.log);
-      }
-    },
-  }) as unknown as FalVideoResponse;
-
-  console.log('FAL AI response:', result);
-  return result;
+  // Return a static demo video URL
+  return {
+    video: "https://hhsjjvjrvnqssthprtma.supabase.co/storage/v1/object/public/videos/demo-influencer.mp4",
+    status: "completed"
+  };
 }
