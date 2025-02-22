@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -48,8 +49,8 @@ export default function CollabPage() {
         throw new Error('Failed to get FAL AI API key');
       }
 
-      // Configure Fal AI client with the key from Supabase
-      Object.assign(fal, { credentials: data.secret });
+      // Set the credentials directly on the fal object
+      (fal as any).credentials = data.secret;
 
       // Convert the blob URL back to base64 for the API
       const response = await fetch(selectedImage);
