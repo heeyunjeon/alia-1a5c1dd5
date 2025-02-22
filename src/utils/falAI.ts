@@ -20,7 +20,7 @@ export async function configureFalAI() {
   }
 
   // Configure FAL AI with the credentials
-  fal.default.config({
+  (fal.default as any).config({
     credentials: data.secret,
   });
 }
