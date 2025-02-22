@@ -1,7 +1,11 @@
 
 import * as fal from '@fal-ai/serverless-client';
 
-export const generateVideo = async (imageUrl: string, apiKey: string) => {
+interface VideoResponse {
+  video: string;
+}
+
+export const generateVideo = async (imageUrl: string, apiKey: string): Promise<string> => {
   fal.config({
     credentials: apiKey,
   });
@@ -12,7 +16,7 @@ export const generateVideo = async (imageUrl: string, apiKey: string) => {
         image: imageUrl,
         frame_count: 30,
       },
-    });
+    }) as VideoResponse;
 
     return result.video;
   } catch (error) {
