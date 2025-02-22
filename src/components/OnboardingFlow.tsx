@@ -1,8 +1,11 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface OnboardingFlowProps {
   onComplete: (category: string) => void;
@@ -28,8 +31,37 @@ const steps = [
 ];
 
 export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [socialMedia, setSocialMedia] = useState({
+    instagram: "",
+    tiktok: "",
+    youtube: "",
+  });
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate("/auth");
+      } else {
+        setSession(session);
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        navigate("/auth");
+      } else {
+        setSession(session);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -43,9 +75,24 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
     }
   };
 
-  const handleComplete = () => {
-    if (selectedCategory) {
+  const handleComplete = async () => {
+    if (!selectedCategory || !session?.user) return;
+
+    try {
+      const { error } = await supabase.from("influencer_profiles").insert({
+        id: session.user.id,
+        category: selectedCategory,
+        instagram_username: socialMedia.instagram,
+        tiktok_username: socialMedia.tiktok,
+        youtube_channel: socialMedia.youtube,
+      });
+
+      if (error) throw error;
+
+      toast.success("Profile created successfully!");
       onComplete(selectedCategory.toLowerCase());
+    } catch (error: any) {
+      toast.error("Failed to create profile: " + error.message);
     }
   };
 
@@ -57,9 +104,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
             <h2 className="text-2xl font-bold tracking-tight">
               {steps[currentStep].title}
             </h2>
-            <p className="text-neutral-500">
-              {steps[currentStep].description}
-            </p>
+            <p className="text-neutral-500">{steps[currentStep].description}</p>
           </div>
 
           <div className="flex gap-2 mb-8">
@@ -76,16 +121,35 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
           <div className="space-y-4">
             {currentStep === 0 && (
               <div className="space-y-4 animate-fadeIn">
-                <Input placeholder="Full Name" />
-                <Input type="email" placeholder="Email" />
+                <p className="text-sm text-neutral-600">
+                  Welcome! Your account is ready to be set up.
+                </p>
               </div>
             )}
 
             {currentStep === 1 && (
               <div className="space-y-4 animate-fadeIn">
-                <Input placeholder="Instagram Username" />
-                <Input placeholder="TikTok Username" />
-                <Input placeholder="YouTube Channel" />
+                <Input
+                  placeholder="Instagram Username"
+                  value={socialMedia.instagram}
+                  onChange={(e) =>
+                    setSocialMedia({ ...socialMedia, instagram: e.target.value })
+                  }
+                />
+                <Input
+                  placeholder="TikTok Username"
+                  value={socialMedia.tiktok}
+                  onChange={(e) =>
+                    setSocialMedia({ ...socialMedia, tiktok: e.target.value })
+                  }
+                />
+                <Input
+                  placeholder="YouTube Channel"
+                  value={socialMedia.youtube}
+                  onChange={(e) =>
+                    setSocialMedia({ ...socialMedia, youtube: e.target.value })
+                  }
+                />
               </div>
             )}
 
@@ -157,7 +221,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
             )}
             <div className="flex-1" />
             {currentStep < steps.length - 1 ? (
-              <Button 
+              <Button
                 onClick={nextStep}
                 disabled={currentStep === 2 && !selectedCategory}
               >
@@ -171,4 +235,4 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
       </Card>
     </div>
   );
-};
+}

@@ -9,7 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      influencer_profiles: {
+        Row: {
+          category: Database["public"]["Enums"]["influencer_category"]
+          created_at: string | null
+          id: string
+          instagram_username: string | null
+          tiktok_username: string | null
+          updated_at: string | null
+          youtube_channel: string | null
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["influencer_category"]
+          created_at?: string | null
+          id: string
+          instagram_username?: string | null
+          tiktok_username?: string | null
+          updated_at?: string | null
+          youtube_channel?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["influencer_category"]
+          created_at?: string | null
+          id?: string
+          instagram_username?: string | null
+          tiktok_username?: string | null
+          updated_at?: string | null
+          youtube_channel?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +47,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      influencer_category: "Lifestyle" | "Fashion" | "Tech" | "Beauty"
     }
     CompositeTypes: {
       [_ in never]: never
