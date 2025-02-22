@@ -1,6 +1,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface BrandCardProps {
   name: string;
@@ -17,13 +18,14 @@ export const BrandCard = ({
   budget,
   deadline,
 }: BrandCardProps) => {
+  const navigate = useNavigate();
+
   return (
     <Button 
       variant="ghost" 
       className="p-0 h-auto w-full hover:bg-transparent"
       onClick={() => {
-        // We'll just log for now, but this could open a modal or navigate to a detail page
-        console.log(`Clicked on brand: ${name}`);
+        navigate(`/brand/${encodeURIComponent(name)}`);
       }}
     >
       <Card className="w-full overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
