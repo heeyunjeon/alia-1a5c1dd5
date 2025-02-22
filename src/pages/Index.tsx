@@ -11,7 +11,7 @@ const mockBrands = [
   {
     name: "Tech Giant Co",
     logo: "/placeholder.svg",
-    category: "Technology",
+    category: "Tech",
     budget: "$5,000 - $10,000",
     deadline: "March 30, 2024"
   },
@@ -88,7 +88,7 @@ const Index = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
-                    <SelectItem value="technology">Technology</SelectItem>
+                    <SelectItem value="tech">Tech</SelectItem>
                     <SelectItem value="fashion">Fashion</SelectItem>
                     <SelectItem value="beauty">Beauty</SelectItem>
                     <SelectItem value="lifestyle">Lifestyle</SelectItem>
