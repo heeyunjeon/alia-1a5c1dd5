@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import * as fal from "@fal-ai/serverless-client";
+import { supabase } from "@/integrations/supabase/client";
 
 // Define the type for the API response
 interface FalVideoResponse {
@@ -37,9 +38,17 @@ export default function CollabPage() {
     toast.loading("Transforming your image into video...");
     
     try {
-      // Configure Fal AI client
+      // Get the FAL AI key from Supabase secrets
+      const { data: { secret: falApiKey }, error: secretError } = await supabase
+        .rpc('get_service_secret', { secret_name: 'FAL_AI_KEY' });
+
+      if (secretError || !falApiKey) {
+        throw new Error('Failed to get FAL AI API key');
+      }
+
+      // Configure Fal AI client with the key from Supabase
       fal.config({
-        credentials: process.env.FAL_AI_KEY,
+        credentials: falApiKey,
       });
 
       // Convert the blob URL back to base64 for the API
