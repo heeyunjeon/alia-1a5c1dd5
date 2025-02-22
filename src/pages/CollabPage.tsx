@@ -38,17 +38,20 @@ export default function CollabPage() {
     toast.loading("Transforming your image into video...");
     
     try {
-      // Get the FAL AI key from Supabase secrets
-      const { data: { secret: falApiKey }, error: secretError } = await supabase
-        .rpc('get_service_secret', { secret_name: 'FAL_AI_KEY' });
+      // Get the FAL AI key from Supabase secrets with proper type checking
+      const { data, error: secretError } = await supabase
+        .rpc('get_service_secret', { secret_name: 'FAL_AI_KEY' }) as { 
+          data: { secret: string } | null;
+          error: Error | null;
+        };
 
-      if (secretError || !falApiKey) {
+      if (secretError || !data?.secret) {
         throw new Error('Failed to get FAL AI API key');
       }
 
       // Configure Fal AI client with the key from Supabase
       fal.config({
-        credentials: falApiKey,
+        credentials: data.secret,
       });
 
       // Convert the blob URL back to base64 for the API
