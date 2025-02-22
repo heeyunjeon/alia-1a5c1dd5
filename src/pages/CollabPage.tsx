@@ -21,12 +21,12 @@ export default function CollabPage() {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => setSelectedImage(e.target?.result as string);
-      reader.readAsDataURL(file);
+      // Create a URL for the selected file
+      const imageUrl = URL.createObjectURL(file);
+      setSelectedImage(imageUrl);
     }
   };
 
@@ -42,20 +42,34 @@ export default function CollabPage() {
         credentials: process.env.FAL_AI_KEY,
       });
 
-      // Call the image-to-video endpoint with type assertion
-      const result = await fal.run('image-to-video', {
-        input: {
-          image_url: selectedImage,
-          num_frames: 30,
-        },
-      }) as FalVideoResponse;
+      // Convert the blob URL back to base64 for the API
+      const response = await fetch(selectedImage);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      
+      reader.onloadend = async () => {
+        try {
+          // Call the image-to-video endpoint with type assertion
+          const result = await fal.run('image-to-video', {
+            input: {
+              image_url: reader.result as string,
+              num_frames: 30,
+            },
+          }) as FalVideoResponse;
 
-      if (result.video) {
-        setVideoUrl(result.video);
-        toast.success("Video created successfully!");
-      } else {
-        throw new Error("No video generated");
-      }
+          if (result.video) {
+            setVideoUrl(result.video);
+            toast.success("Video created successfully!");
+          } else {
+            throw new Error("No video generated");
+          }
+        } catch (error) {
+          console.error("Error transforming image:", error);
+          toast.error("Failed to transform image to video. Please try again.");
+        }
+      };
+
+      reader.readAsDataURL(blob);
     } catch (error) {
       console.error("Error transforming image:", error);
       toast.error("Failed to transform image to video. Please try again.");
@@ -93,11 +107,14 @@ export default function CollabPage() {
                     <img
                       src={selectedImage}
                       alt="Preview"
-                      className="mx-auto max-h-48 rounded"
+                      className="mx-auto max-h-48 rounded object-contain"
                     />
                     <Button
                       variant="outline"
-                      onClick={() => setSelectedImage(null)}
+                      onClick={() => {
+                        URL.revokeObjectURL(selectedImage);
+                        setSelectedImage(null);
+                      }}
                     >
                       Remove Image
                     </Button>
