@@ -15,6 +15,11 @@ interface FalVideoResponse {
   status?: string;
 }
 
+// Define the type for fal.config options
+interface FalConfig {
+  credentials: string;
+}
+
 export default function CollabPage() {
   const { brandName } = useParams();
   const navigate = useNavigate();
@@ -49,8 +54,8 @@ export default function CollabPage() {
         throw new Error('Failed to get FAL AI API key');
       }
 
-      // Configure Fal AI client with the key from Supabase
-      fal.config({
+      // Configure Fal AI client with the key from Supabase using proper typing
+      (fal.config as (options: FalConfig) => void)({
         credentials: data.secret,
       });
 
