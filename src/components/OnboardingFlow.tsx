@@ -25,6 +25,7 @@ const steps = [
 
 export const OnboardingFlow = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -81,16 +82,32 @@ export const OnboardingFlow = () => {
             {currentStep === 2 && (
               <div className="space-y-4 animate-fadeIn">
                 <div className="grid grid-cols-2 gap-4">
-                  <Button variant="outline" className="h-24">
+                  <Button
+                    variant={selectedCategory === "Lifestyle" ? "default" : "outline"}
+                    className="h-24 transition-colors"
+                    onClick={() => setSelectedCategory("Lifestyle")}
+                  >
                     Lifestyle
                   </Button>
-                  <Button variant="outline" className="h-24">
+                  <Button
+                    variant={selectedCategory === "Fashion" ? "default" : "outline"}
+                    className="h-24 transition-colors"
+                    onClick={() => setSelectedCategory("Fashion")}
+                  >
                     Fashion
                   </Button>
-                  <Button variant="outline" className="h-24">
+                  <Button
+                    variant={selectedCategory === "Tech" ? "default" : "outline"}
+                    className="h-24 transition-colors"
+                    onClick={() => setSelectedCategory("Tech")}
+                  >
                     Tech
                   </Button>
-                  <Button variant="outline" className="h-24">
+                  <Button
+                    variant={selectedCategory === "Beauty" ? "default" : "outline"}
+                    className="h-24 transition-colors"
+                    onClick={() => setSelectedCategory("Beauty")}
+                  >
                     Beauty
                   </Button>
                 </div>
@@ -130,7 +147,12 @@ export const OnboardingFlow = () => {
             )}
             <div className="flex-1" />
             {currentStep < steps.length - 1 ? (
-              <Button onClick={nextStep}>Continue</Button>
+              <Button 
+                onClick={nextStep}
+                disabled={currentStep === 2 && !selectedCategory}
+              >
+                Continue
+              </Button>
             ) : (
               <Button>Get Started</Button>
             )}
