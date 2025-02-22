@@ -20,8 +20,6 @@ export async function configureFalAI() {
   }
 
   fal.config({
-    requestTimeout: 300000,
-    proxyUrl: "https://gateway.fal.ai",
     credentials: data.secret,
   });
 }
