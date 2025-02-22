@@ -19,7 +19,8 @@ export async function configureFalAI() {
     throw new Error('Failed to get FAL AI API key');
   }
 
-  fal.config({
+  // Configure FAL AI with the credentials
+  (fal as any).config({
     credentials: data.secret,
   });
 }
