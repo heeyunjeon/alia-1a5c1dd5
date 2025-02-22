@@ -1,9 +1,53 @@
 
 import { OnboardingFlow } from "@/components/OnboardingFlow";
+import { BrandCard } from "@/components/BrandCard";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Search, SlidersHorizontal } from "lucide-react";
+
+const mockBrands = [
+  {
+    name: "Tech Giant Co",
+    logo: "/placeholder.svg",
+    category: "Technology",
+    budget: "$5,000 - $10,000",
+    deadline: "March 30, 2024"
+  },
+  {
+    name: "Fashion Forward",
+    logo: "/placeholder.svg",
+    category: "Fashion",
+    budget: "$2,000 - $5,000",
+    deadline: "April 15, 2024"
+  },
+  {
+    name: "Beauty Basics",
+    logo: "/placeholder.svg",
+    category: "Beauty",
+    budget: "$3,000 - $7,000",
+    deadline: "March 25, 2024"
+  },
+  {
+    name: "Lifestyle Plus",
+    logo: "/placeholder.svg",
+    category: "Lifestyle",
+    budget: "$4,000 - $8,000",
+    deadline: "April 5, 2024"
+  }
+];
 
 const Index = () => {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+
+  const filteredBrands = mockBrands.filter(brand => {
+    const matchesSearch = brand.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = categoryFilter === "all" || brand.category.toLowerCase() === categoryFilter.toLowerCase();
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100">
@@ -11,8 +55,56 @@ const Index = () => {
         <OnboardingFlow onComplete={() => setHasCompletedOnboarding(true)} />
       ) : (
         <div className="container mx-auto px-4 py-8">
-          <h1 className="text-2xl font-bold mb-4">Welcome to your Dashboard</h1>
-          {/* Dashboard content will go here */}
+          <div className="flex flex-col gap-6">
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold">Brand Collaborations</h1>
+              <Button variant="outline">
+                <SlidersHorizontal className="h-4 w-4 mr-2" />
+                Filters
+              </Button>
+            </div>
+
+            <div className="flex gap-4 flex-wrap md:flex-nowrap">
+              <div className="w-full md:w-2/3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input 
+                    placeholder="Search brands..." 
+                    className="pl-10"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="w-full md:w-1/3">
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="technology">Technology</SelectItem>
+                    <SelectItem value="fashion">Fashion</SelectItem>
+                    <SelectItem value="beauty">Beauty</SelectItem>
+                    <SelectItem value="lifestyle">Lifestyle</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredBrands.map((brand, index) => (
+                <BrandCard
+                  key={index}
+                  name={brand.name}
+                  logo={brand.logo}
+                  category={brand.category}
+                  budget={brand.budget}
+                  deadline={brand.deadline}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </div>
