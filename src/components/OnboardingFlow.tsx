@@ -4,6 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+interface OnboardingFlowProps {
+  onComplete: () => void;
+}
+
 const steps = [
   {
     title: "Welcome",
@@ -23,7 +27,7 @@ const steps = [
   },
 ];
 
-export const OnboardingFlow = () => {
+export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -37,6 +41,10 @@ export const OnboardingFlow = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
+  };
+
+  const handleComplete = () => {
+    onComplete();
   };
 
   return (
@@ -154,7 +162,7 @@ export const OnboardingFlow = () => {
                 Continue
               </Button>
             ) : (
-              <Button>Get Started</Button>
+              <Button onClick={handleComplete}>Get Started</Button>
             )}
           </div>
         </div>
