@@ -38,7 +38,7 @@ export default function CollabPage() {
     toast.loading("Transforming your image into video...");
     
     try {
-      // Get the FAL AI key from Supabase secrets with proper type checking
+      // Get the FAL AI key from Supabase secrets
       const { data, error: secretError } = await supabase
         .rpc('get_service_secret', { secret_name: 'FAL_AI_KEY' }) as { 
           data: { secret: string } | null;
@@ -49,42 +49,47 @@ export default function CollabPage() {
         throw new Error('Failed to get FAL AI API key');
       }
 
-      // Set the credentials directly on the fal object
-      (fal as any).credentials = data.secret;
+      // Configure FAL AI client
+      fal.config({
+        credentials: data.secret,
+      });
 
       // Convert the blob URL back to base64 for the API
       const response = await fetch(selectedImage);
       const blob = await response.blob();
-      const reader = new FileReader();
-      
-      reader.onloadend = async () => {
-        try {
-          // Call the image-to-video endpoint with type assertion
-          const result = await fal.run('image-to-video', {
-            input: {
-              image_url: reader.result as string,
-              num_frames: 30,
-            },
-          }) as FalVideoResponse;
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = reader.result as string;
+          resolve(base64String);
+        };
+        reader.readAsDataURL(blob);
+      });
 
-          if (result.video) {
-            setVideoUrl(result.video);
-            toast.success("Video created successfully!");
-          } else {
-            throw new Error("No video generated");
-          }
-        } catch (error) {
-          console.error("Error transforming image:", error);
-          toast.error("Failed to transform image to video. Please try again.");
-        }
-      };
+      // Call the image-to-video endpoint
+      console.log('Calling FAL AI with image data...');
+      const result = await fal.run('fal-ai/image-to-video', {
+        input: {
+          image: base64,
+          motion_bucket_id: 127, // Adding motion intensity parameter
+          cond_aug: 0.02,       // Adding conditioning augmentation
+        },
+      }) as FalVideoResponse;
 
-      reader.readAsDataURL(blob);
+      console.log('FAL AI response:', result);
+
+      if (result.video) {
+        setVideoUrl(result.video);
+        toast.success("Video created successfully!");
+      } else {
+        throw new Error("No video generated");
+      }
     } catch (error) {
       console.error("Error transforming image:", error);
       toast.error("Failed to transform image to video. Please try again.");
     } finally {
       setIsProcessing(false);
+      toast.dismiss();
     }
   };
 
