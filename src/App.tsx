@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Index from "@/pages/Index";
 import BrandDetails from "@/pages/BrandDetails";
 import CollabPage from "@/pages/CollabPage";
+import SocialMediaShare from "@/pages/SocialMediaShare";
 import NotFound from "@/pages/NotFound";
 import AuthPage from "@/pages/AuthPage";
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/brand/:brandName" element={<BrandDetails />} />
         <Route path="/brand/:brandName/collab" element={<CollabPage />} />
+        <Route path="/brand/:brandName/collab/share" element={<SocialMediaShare />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
