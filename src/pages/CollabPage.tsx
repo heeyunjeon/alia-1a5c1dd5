@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,13 @@ import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import * as fal from "@fal-ai/serverless-client";
+
+// Define the type for the API response
+interface FalVideoResponse {
+  video: string;
+  task_id?: string;
+  status?: string;
+}
 
 export default function CollabPage() {
   const { brandName } = useParams();
@@ -34,13 +42,13 @@ export default function CollabPage() {
         credentials: process.env.FAL_AI_KEY,
       });
 
-      // Call the image-to-video endpoint
+      // Call the image-to-video endpoint with type assertion
       const result = await fal.run('image-to-video', {
         input: {
           image_url: selectedImage,
           num_frames: 30,
         },
-      });
+      }) as FalVideoResponse;
 
       if (result.video) {
         setVideoUrl(result.video);
