@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import BrandDetails from "./pages/BrandDetails";
+import CollabPage from "./pages/CollabPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,6 +30,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/brand/:brandName" element={<BrandDetails />} />
+              <Route path="/brand/:brandName/collab" element={<CollabPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

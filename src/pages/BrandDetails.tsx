@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
@@ -37,14 +36,22 @@ export default function BrandDetails() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 py-8">
       <div className="container mx-auto px-4">
-        <Button 
-          variant="ghost" 
-          className="mb-6" 
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Brands
-        </Button>
+        <div className="flex justify-between items-center mb-6">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Brands
+          </Button>
+          
+          <Button 
+            onClick={() => navigate(`/brand/${brandName}/collab`)}
+            className="bg-brandPrimary hover:bg-brandPrimary/90"
+          >
+            Start Collaboration
+          </Button>
+        </div>
 
         <div className="space-y-6">
           {/* Brand Information */}
