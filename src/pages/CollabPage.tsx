@@ -15,11 +15,6 @@ interface FalVideoResponse {
   status?: string;
 }
 
-// Define the type for fal.config options
-interface FalConfig {
-  credentials: string;
-}
-
 export default function CollabPage() {
   const { brandName } = useParams();
   const navigate = useNavigate();
@@ -55,9 +50,9 @@ export default function CollabPage() {
       }
 
       // Configure Fal AI client with the key from Supabase using proper typing
-      (fal.config as (options: FalConfig) => void)({
-        credentials: data.secret,
-      });
+      const falClient = { credentials: data.secret };
+      // @ts-ignore
+      fal.config(falClient);
 
       // Convert the blob URL back to base64 for the API
       const response = await fetch(selectedImage);
