@@ -19,11 +19,10 @@ export async function configureFalAI() {
     throw new Error('Failed to get FAL AI API key');
   }
 
-  // Fix: Pass credentials as an object with key property
   fal.config({
-    credentials: {
-      key: data.secret
-    },
+    requestTimeout: 300000,
+    proxyUrl: "https://gateway.fal.ai",
+    credentials: data.secret,
   });
 }
 
