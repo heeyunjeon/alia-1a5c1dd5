@@ -1,8 +1,9 @@
 
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Facebook, Twitter, Instagram } from "lucide-react";
+import { ArrowLeft, Instagram, Youtube } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { TikTok } from 'lucide-react';
 
 export default function SocialMediaShare() {
   const { brandName } = useParams();
@@ -24,29 +25,29 @@ export default function SocialMediaShare() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="p-6 flex flex-col items-center space-y-4">
-            <Facebook className="h-12 w-12 text-blue-600" />
-            <h2 className="text-xl font-semibold">Facebook</h2>
-            <p className="text-2xl font-bold text-green-600">$199</p>
-            <Button className="w-full" onClick={() => alert("Coming soon!")}>
-              Share on Facebook
-            </Button>
-          </Card>
-
-          <Card className="p-6 flex flex-col items-center space-y-4">
-            <Twitter className="h-12 w-12 text-blue-400" />
-            <h2 className="text-xl font-semibold">Twitter</h2>
-            <p className="text-2xl font-bold text-green-600">$249</p>
-            <Button className="w-full" onClick={() => alert("Coming soon!")}>
-              Share on Twitter
-            </Button>
-          </Card>
-
-          <Card className="p-6 flex flex-col items-center space-y-4">
             <Instagram className="h-12 w-12 text-pink-600" />
             <h2 className="text-xl font-semibold">Instagram</h2>
-            <p className="text-2xl font-bold text-green-600">$299</p>
+            <p className="text-2xl font-bold text-green-600">$199</p>
             <Button className="w-full" onClick={() => alert("Coming soon!")}>
               Share on Instagram
+            </Button>
+          </Card>
+
+          <Card className="p-6 flex flex-col items-center space-y-4">
+            <TikTok className="h-12 w-12 text-black" />
+            <h2 className="text-xl font-semibold">TikTok</h2>
+            <p className="text-2xl font-bold text-green-600">$249</p>
+            <Button className="w-full" onClick={() => alert("Coming soon!")}>
+              Share on TikTok
+            </Button>
+          </Card>
+
+          <Card className="p-6 flex flex-col items-center space-y-4">
+            <Youtube className="h-12 w-12 text-red-600" />
+            <h2 className="text-xl font-semibold">YouTube</h2>
+            <p className="text-2xl font-bold text-green-600">$299</p>
+            <Button className="w-full" onClick={() => alert("Coming soon!")}>
+              Share on YouTube
             </Button>
           </Card>
         </div>
