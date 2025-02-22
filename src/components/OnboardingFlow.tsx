@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface OnboardingFlowProps {
-  onComplete: () => void;
+  onComplete: (category: string) => void;
 }
 
 const steps = [
@@ -44,7 +44,9 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   };
 
   const handleComplete = () => {
-    onComplete();
+    if (selectedCategory) {
+      onComplete(selectedCategory.toLowerCase());
+    }
   };
 
   return (

@@ -43,6 +43,11 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
+  const handleOnboardingComplete = (selectedCategory: string) => {
+    setHasCompletedOnboarding(true);
+    setCategoryFilter(selectedCategory);
+  };
+
   const filteredBrands = mockBrands.filter(brand => {
     const matchesSearch = brand.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = categoryFilter === "all" || brand.category.toLowerCase() === categoryFilter.toLowerCase();
@@ -52,7 +57,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100">
       {!hasCompletedOnboarding ? (
-        <OnboardingFlow onComplete={() => setHasCompletedOnboarding(true)} />
+        <OnboardingFlow onComplete={handleOnboardingComplete} />
       ) : (
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col gap-6">
