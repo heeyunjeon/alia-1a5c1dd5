@@ -27,15 +27,24 @@ export async function configureFalAI() {
   });
 }
 
-export async function transformImageToVideo(base64Image: string): Promise<FalVideoResponse> {
+export async function transformImageToVideo(base64Image: string, brandName: string): Promise<FalVideoResponse> {
   console.log('Calling FAL AI with image data...');
-  const result = await fal.run('fal-ai/image-to-video', {
+  
+  // Generate the prompt with the dynamic brand name
+  const prompt = `a beautiful skinny influencer with a flawless glowing skin is talking about her '${brandName}' to post on tiktok at her luxury high-rise apartment that overlooks Central Park Manhattan that is modern and tech-savvy`;
+  
+  const result = await fal.subscribe("fal-ai/kling-video/v1.6/pro/image-to-video", {
     input: {
-      image: base64Image,
-      motion_bucket_id: 127,
-      cond_aug: 0.02,
+      prompt: prompt,
+      image_url: base64Image,
     },
-  }) as FalVideoResponse;
+    logs: true,
+    onQueueUpdate: (update) => {
+      if (update.status === "IN_PROGRESS") {
+        update.logs?.map((log) => log.message).forEach(console.log);
+      }
+    },
+  }) as unknown as FalVideoResponse;
 
   console.log('FAL AI response:', result);
   return result;

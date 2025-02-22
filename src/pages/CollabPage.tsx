@@ -31,7 +31,7 @@ export default function CollabPage() {
   };
 
   const handleTransform = async () => {
-    if (!selectedImage) return;
+    if (!selectedImage || !brandName) return;
     
     setIsProcessing(true);
     toast.loading("Transforming your image into video...");
@@ -50,7 +50,7 @@ export default function CollabPage() {
         reader.readAsDataURL(blob);
       });
 
-      const result = await transformImageToVideo(base64);
+      const result = await transformImageToVideo(base64, brandName);
 
       if (result.video) {
         setVideoUrl(result.video);
