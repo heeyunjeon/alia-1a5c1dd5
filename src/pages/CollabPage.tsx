@@ -15,17 +15,22 @@ export default function CollabPage() {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setSelectedImage(imageUrl);
+      // Create a new FileReader instance
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        // Set the result as the image source
+        setSelectedImage(e.target?.result as string);
+      };
+      // Read the file as a data URL
+      reader.readAsDataURL(file);
     }
   };
 
   const handleImageRemove = () => {
     if (selectedImage) {
-      URL.revokeObjectURL(selectedImage);
       setSelectedImage(null);
     }
   };
@@ -39,18 +44,7 @@ export default function CollabPage() {
     try {
       await configureFalAI();
 
-      const response = await fetch(selectedImage);
-      const blob = await response.blob();
-      const base64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64String = reader.result as string;
-          resolve(base64String);
-        };
-        reader.readAsDataURL(blob);
-      });
-
-      const result = await transformImageToVideo(base64, brandName);
+      const result = await transformImageToVideo(selectedImage, brandName);
 
       if (result.video) {
         setVideoUrl(result.video);
