@@ -24,11 +24,16 @@ export default function CollabPage() {
       reader.onload = (e) => {
         console.log("FileReader loaded, result exists:", !!e.target?.result);
         const result = e.target?.result as string;
-        console.log("Setting selected image, length:", result.length);
-        setSelectedImage(result);
+        // Ensure proper data URL formatting
+        if (result.startsWith('data:')) {
+          setSelectedImage(result);
+        } else {
+          setSelectedImage(`data:${file.type};base64,${result.split(',')[1]}`);
+        }
       };
       reader.onerror = (e) => {
         console.error("FileReader error:", e);
+        toast.error("Failed to read the image file");
       };
       reader.readAsDataURL(file);
     }
