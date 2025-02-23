@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -84,13 +84,13 @@ export default function CollabPage() {
   };
 
   // Cleanup object URLs on unmount
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       if (selectedImage) {
         URL.revokeObjectURL(selectedImage);
       }
     };
-  }, []);
+  }, [selectedImage]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 py-8">
