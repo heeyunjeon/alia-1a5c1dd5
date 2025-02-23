@@ -17,33 +17,27 @@ export default function CollabPage() {
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    console.log("File selected:", file?.type);
-    
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        console.log("FileReader result type:", typeof result);
-        console.log("FileReader result starts with:", result.substring(0, 100));
-        
-        // Always ensure we have a proper data URL
-        let imageData = result;
-        if (!result.startsWith('data:image/')) {
-          imageData = `data:${file.type};base64,${result.replace(/^data:.*?;base64,/, '')}`;
-        }
-        console.log("Final image data starts with:", imageData.substring(0, 100));
-        setSelectedImage(imageData);
-      };
-      reader.onerror = (e) => {
-        console.error("FileReader error:", e);
-        toast.error("Failed to read the image file");
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error("Please select an image file");
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        console.log("Setting image data of type:", file.type);
+        setSelectedImage(reader.result);
+      }
+    };
+    reader.onerror = () => {
+      toast.error("Failed to read the image file");
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleImageRemove = () => {
-    console.log("Removing image");
     setSelectedImage(null);
   };
 

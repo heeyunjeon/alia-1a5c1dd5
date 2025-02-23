@@ -25,18 +25,13 @@ export function ImageUploader({ selectedImage, onImageSelect, onImageRemove }: I
       if (file.type.startsWith('image/')) {
         const event = {
           target: {
-            files: files
+            files: [file]
           }
         } as unknown as React.ChangeEvent<HTMLInputElement>;
         onImageSelect(event);
       }
     }
   }, [onImageSelect]);
-
-  console.log("ImageUploader received selectedImage:", selectedImage ? "Image exists" : "No image");
-  if (selectedImage) {
-    console.log("Image data starts with:", selectedImage.substring(0, 50));
-  }
 
   return (
     <Card className="p-6">
@@ -54,9 +49,12 @@ export function ImageUploader({ selectedImage, onImageSelect, onImageRemove }: I
               <div className="relative w-full max-w-md mx-auto">
                 <img
                   src={selectedImage}
-                  alt="Preview"
+                  alt="Selected preview"
                   className="mx-auto max-h-48 w-full rounded object-contain"
-                  onError={(e) => console.error("Image failed to load:", e)}
+                  onError={(e) => {
+                    console.error("Image load error. Image data length:", selectedImage.length);
+                    console.error("Image data starts with:", selectedImage.substring(0, 50));
+                  }}
                 />
               </div>
               <Button
