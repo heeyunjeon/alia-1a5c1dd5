@@ -17,19 +17,22 @@ export default function CollabPage() {
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    console.log("File selected:", file);
+    console.log("File selected:", file?.type);
     
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        console.log("FileReader loaded, result exists:", !!e.target?.result);
         const result = e.target?.result as string;
-        // Ensure proper data URL formatting
-        if (result.startsWith('data:')) {
-          setSelectedImage(result);
-        } else {
-          setSelectedImage(`data:${file.type};base64,${result.split(',')[1]}`);
+        console.log("FileReader result type:", typeof result);
+        console.log("FileReader result starts with:", result.substring(0, 100));
+        
+        // Always ensure we have a proper data URL
+        let imageData = result;
+        if (!result.startsWith('data:image/')) {
+          imageData = `data:${file.type};base64,${result.replace(/^data:.*?;base64,/, '')}`;
         }
+        console.log("Final image data starts with:", imageData.substring(0, 100));
+        setSelectedImage(imageData);
       };
       reader.onerror = (e) => {
         console.error("FileReader error:", e);
@@ -68,8 +71,6 @@ export default function CollabPage() {
       toast.dismiss();
     }
   };
-
-  console.log("Current selectedImage state:", selectedImage ? "Image exists" : "No image");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 py-8">
