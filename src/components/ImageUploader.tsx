@@ -33,6 +33,8 @@ export function ImageUploader({ selectedImage, onImageSelect, onImageRemove }: I
     }
   }, [onImageSelect]);
 
+  console.log("ImageUploader received selectedImage:", selectedImage ? "Image exists" : "No image");
+
   return (
     <Card className="p-6">
       <div className="space-y-4">
