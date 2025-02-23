@@ -7,6 +7,12 @@ export interface FalVideoResponse {
   status?: string;
 }
 
+// Define the expected response type from FAL AI
+interface FalAIResponse {
+  video: string;
+  [key: string]: any; // Allow for additional properties
+}
+
 export async function configureFalAI() {
   fal.config({
     // FAL AI uses a proxy so we don't need to expose the credentials in the frontend
@@ -30,7 +36,7 @@ export async function transformImageToVideo(base64Image: string, brandName: stri
         motion_bucket_id: 180, // Higher values = more motion
         cond_aug: 0.02, // Lower values = closer to original image
       },
-    });
+    }) as FalAIResponse; // Type assertion to specify the expected response type
 
     console.log('FAL AI transformation completed:', result);
 
