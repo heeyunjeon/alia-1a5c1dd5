@@ -16,9 +16,9 @@ export async function configureFalAI() {
 export async function transformImageToVideo(base64Image: string, brandName: string): Promise<FalVideoResponse> {
   console.log('Using demo video...');
   
-  // Return a publicly accessible demo video URL
+  // Return the video from Supabase storage
   return {
-    video: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    video: "https://hhsjjvjrvnqssthprtma.supabase.co/storage/v1/object/public/videos/output.mp4",
     status: "completed"
   };
 }
