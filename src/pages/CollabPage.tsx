@@ -17,22 +17,26 @@ export default function CollabPage() {
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    console.log("File selected:", file);
+    
     if (file) {
-      // Create a new FileReader instance
       const reader = new FileReader();
       reader.onload = (e) => {
-        // Set the result as the image source
-        setSelectedImage(e.target?.result as string);
+        console.log("FileReader loaded, result exists:", !!e.target?.result);
+        const result = e.target?.result as string;
+        console.log("Setting selected image, length:", result.length);
+        setSelectedImage(result);
       };
-      // Read the file as a data URL
+      reader.onerror = (e) => {
+        console.error("FileReader error:", e);
+      };
       reader.readAsDataURL(file);
     }
   };
 
   const handleImageRemove = () => {
-    if (selectedImage) {
-      setSelectedImage(null);
-    }
+    console.log("Removing image");
+    setSelectedImage(null);
   };
 
   const handleTransform = async () => {
@@ -43,7 +47,6 @@ export default function CollabPage() {
     
     try {
       await configureFalAI();
-
       const result = await transformImageToVideo(selectedImage, brandName);
 
       if (result.video) {
@@ -60,6 +63,8 @@ export default function CollabPage() {
       toast.dismiss();
     }
   };
+
+  console.log("Current selectedImage state:", selectedImage ? "Image exists" : "No image");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 py-8">
