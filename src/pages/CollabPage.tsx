@@ -28,24 +28,21 @@ export default function CollabPage() {
 
     const reader = new FileReader();
     reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        // Validate the data URL format
-        if (!reader.result.startsWith('data:image/')) {
-          toast.error("Invalid image format");
-          return;
-        }
-        
+      const result = reader.result;
+      if (typeof result === 'string' && result.startsWith('data:image/')) {
         // Create an Image object to verify the image can be loaded
         const img = new Image();
         img.onload = () => {
           console.log("Image verified successfully:", img.width, "x", img.height);
-          setSelectedImage(reader.result);
+          setSelectedImage(result);
         };
         img.onerror = () => {
           console.error("Failed to verify image");
           toast.error("Failed to load image. Please try a different file.");
         };
-        img.src = reader.result;
+        img.src = result;
+      } else {
+        toast.error("Invalid image format");
       }
     };
     reader.onerror = (error) => {
