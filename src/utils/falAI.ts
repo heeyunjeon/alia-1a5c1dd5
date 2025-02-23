@@ -15,9 +15,8 @@ interface FalAIResponse {
 
 export async function configureFalAI() {
   fal.config({
-    // FAL AI uses a proxy so we don't need to expose the credentials in the frontend
     proxyUrl: "https://gateway.fal.ai",
-    credentials: "include", // This ensures cookies are included with the request
+    credentials: "include",
   });
 }
 
@@ -25,18 +24,24 @@ export async function transformImageToVideo(base64Image: string, brandName: stri
   try {
     console.log('Initializing FAL AI transformation...');
     
-    // Remove the data:image/... prefix from base64 string if present
     const base64Data = base64Image.includes('base64,') 
       ? base64Image.split('base64,')[1] 
       : base64Image;
 
-    const result = await fal.run('image-to-video', {
+    // Use the correct model ID format as required by FAL AI
+    const result = await fal.run('fal-ai/svd', {
       input: {
-        image: base64Data,
-        motion_bucket_id: 180, // Higher values = more motion
-        cond_aug: 0.02, // Lower values = closer to original image
+        image_url: `data:image/jpeg;base64,${base64Data}`,
+        num_frames: 14,
+        num_inference_steps: 25,
+        guidance_scale: 7.5,
+        motion_bucket_id: 180,
+        cond_aug: 0.02,
       },
-    }) as FalAIResponse; // Type assertion to specify the expected response type
+      subscribe: true, // Enable real-time updates
+      pollInterval: 5000, // Poll every 5 seconds
+      maxRetries: 80, // Maximum 80 retries (about 6.5 minutes with 5s interval)
+    }) as FalAIResponse;
 
     console.log('FAL AI transformation completed:', result);
 
