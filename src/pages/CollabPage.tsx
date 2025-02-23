@@ -26,22 +26,31 @@ export default function CollabPage() {
       return;
     }
 
+    console.log("File type:", file.type);
+    console.log("File size:", file.size, "bytes");
+
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result;
-      if (typeof result === 'string' && result.startsWith('data:image/')) {
+      if (typeof result === 'string') {
+        console.log("Data URL length:", result.length);
+        console.log("Data URL type:", result.split(';')[0]);
+        
         // Create an Image object to verify the image can be loaded
         const img = new Image();
         img.onload = () => {
           console.log("Image verified successfully:", img.width, "x", img.height);
           setSelectedImage(result);
         };
-        img.onerror = () => {
-          console.error("Failed to verify image");
+        img.onerror = (error) => {
+          console.error("Failed to verify image:", error);
           toast.error("Failed to load image. Please try a different file.");
         };
+        // Add crossOrigin attribute to handle CORS issues
+        img.crossOrigin = "anonymous";
         img.src = result;
       } else {
+        console.error("Invalid result type:", typeof result);
         toast.error("Invalid image format");
       }
     };
