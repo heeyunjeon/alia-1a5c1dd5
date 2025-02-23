@@ -36,19 +36,8 @@ export default function CollabPage() {
         console.log("Data URL length:", result.length);
         console.log("Data URL type:", result.split(';')[0]);
         
-        // Create an Image object to verify the image can be loaded
-        const img = new Image();
-        img.onload = () => {
-          console.log("Image verified successfully:", img.width, "x", img.height);
-          setSelectedImage(result);
-        };
-        img.onerror = (error) => {
-          console.error("Failed to verify image:", error);
-          toast.error("Failed to load image. Please try a different file.");
-        };
-        // Add crossOrigin attribute to handle CORS issues
-        img.crossOrigin = "anonymous";
-        img.src = result;
+        // Set the image data directly since we're reading a local file
+        setSelectedImage(result);
       } else {
         console.error("Invalid result type:", typeof result);
         toast.error("Invalid image format");
