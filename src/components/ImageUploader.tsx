@@ -39,7 +39,7 @@ export function ImageUploader({ selectedImage, onImageSelect, onImageRemove }: I
         <h2 className="text-xl font-semibold">Upload Your Image</h2>
         <div 
           className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-            selectedImage ? 'border-brandPrimary bg-brandPrimary/5' : 'border-neutral-200 hover:border-brandPrimary/50'
+            selectedImage ? 'border-neutral-300 bg-neutral-50' : 'border-neutral-200 hover:border-neutral-300'
           }`}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
@@ -93,7 +93,7 @@ export function ImageUploader({ selectedImage, onImageSelect, onImageRemove }: I
                 />
                 <label
                   htmlFor="image-upload"
-                  className="cursor-pointer text-brandPrimary hover:text-brandPrimary/80"
+                  className="cursor-pointer text-neutral-600 hover:text-neutral-800"
                 >
                   Click to upload
                 </label>
