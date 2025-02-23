@@ -51,10 +51,11 @@ export function ImageUploader({ selectedImage, onImageSelect, onImageRemove }: I
                   src={selectedImage}
                   alt="Selected preview"
                   className="mx-auto max-h-48 w-full rounded object-contain"
-                  onError={(e) => {
+                  onError={() => {
                     console.error("Image load error. Image data length:", selectedImage.length);
                     console.error("Image data starts with:", selectedImage.substring(0, 50));
                   }}
+                  loading="lazy"
                 />
               </div>
               <Button
@@ -85,7 +86,7 @@ export function ImageUploader({ selectedImage, onImageSelect, onImageRemove }: I
               <div>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   className="hidden"
                   id="image-upload"
                   onChange={onImageSelect}
