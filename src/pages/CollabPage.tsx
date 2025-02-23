@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -19,16 +19,33 @@ export default function CollabPage() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      toast.error("Please select an image file");
+    // Check for supported image types
+    const supportedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!supportedTypes.includes(file.type)) {
+      toast.error("Please select a JPEG, PNG, or WebP image");
       return;
     }
 
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === 'string') {
-        console.log("Image loaded successfully");
-        setSelectedImage(reader.result);
+        // Validate the data URL format
+        if (!reader.result.startsWith('data:image/')) {
+          toast.error("Invalid image format");
+          return;
+        }
+        
+        // Create an Image object to verify the image can be loaded
+        const img = new Image();
+        img.onload = () => {
+          console.log("Image verified successfully:", img.width, "x", img.height);
+          setSelectedImage(reader.result);
+        };
+        img.onerror = () => {
+          console.error("Failed to verify image");
+          toast.error("Failed to load image. Please try a different file.");
+        };
+        img.src = reader.result;
       }
     };
     reader.onerror = (error) => {
