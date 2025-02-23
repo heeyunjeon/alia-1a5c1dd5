@@ -27,17 +27,23 @@ export default function CollabPage() {
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === 'string') {
-        console.log("Setting image data of type:", file.type);
-        setSelectedImage(reader.result);
+        // Create an object URL instead of using base64
+        const blob = new Blob([file], { type: file.type });
+        const objectUrl = URL.createObjectURL(blob);
+        console.log("Created object URL:", objectUrl);
+        setSelectedImage(objectUrl);
       }
     };
     reader.onerror = () => {
       toast.error("Failed to read the image file");
     };
-    reader.readAsDataURL(file);
+    reader.readAsArrayBuffer(file);
   };
 
   const handleImageRemove = () => {
+    if (selectedImage) {
+      URL.revokeObjectURL(selectedImage);
+    }
     setSelectedImage(null);
   };
 
@@ -49,7 +55,18 @@ export default function CollabPage() {
     
     try {
       await configureFalAI();
-      const result = await transformImageToVideo(selectedImage, brandName);
+      // Convert Object URL back to base64 for the API
+      const response = await fetch(selectedImage);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+      });
+      reader.readAsDataURL(blob);
+      const base64Data = await base64Promise;
+      
+      const result = await transformImageToVideo(base64Data, brandName);
 
       if (result.video) {
         setVideoUrl(result.video);
@@ -65,6 +82,15 @@ export default function CollabPage() {
       toast.dismiss();
     }
   };
+
+  // Cleanup object URLs on unmount
+  React.useEffect(() => {
+    return () => {
+      if (selectedImage) {
+        URL.revokeObjectURL(selectedImage);
+      }
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 py-8">
