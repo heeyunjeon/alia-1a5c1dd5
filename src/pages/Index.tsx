@@ -1,12 +1,13 @@
 
 import { OnboardingFlow } from "@/components/OnboardingFlow";
 import { BrandCard } from "@/components/BrandCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const mockBrands = [
   {
@@ -44,6 +45,43 @@ const Index = () => {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) {
+        // Check if user has already completed onboarding
+        checkOnboardingStatus(session.user.id);
+      }
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        checkOnboardingStatus(session.user.id);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const checkOnboardingStatus = async (userId: string) => {
+    const { data: profile } = await supabase
+      .from('influencer_profiles')
+      .select('category')
+      .eq('id', userId)
+      .single();
+
+    if (profile?.category) {
+      setHasCompletedOnboarding(true);
+      setCategoryFilter(profile.category.toLowerCase());
+    }
+  };
 
   const handleOnboardingComplete = (selectedCategory: string) => {
     setHasCompletedOnboarding(true);
@@ -75,12 +113,25 @@ const Index = () => {
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-bold">Brand Collaborations</h1>
               <div className="flex gap-2">
-                <Button 
-                  variant="outline"
-                  onClick={() => navigate("/auth")}
-                >
-                  Sign In / Sign Up
-                </Button>
+                {session ? (
+                  <Button 
+                    variant="outline"
+                    onClick={async () => {
+                      await supabase.auth.signOut();
+                      setHasCompletedOnboarding(false);
+                      navigate("/auth");
+                    }}
+                  >
+                    Sign Out
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="outline"
+                    onClick={() => navigate("/auth")}
+                  >
+                    Sign In / Sign Up
+                  </Button>
+                )}
                 <Button variant="outline">
                   <SlidersHorizontal className="h-4 w-4 mr-2" />
                   Filters
