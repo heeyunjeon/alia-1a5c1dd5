@@ -34,6 +34,9 @@ export function ImageUploader({ selectedImage, onImageSelect, onImageRemove }: I
   }, [onImageSelect]);
 
   console.log("ImageUploader received selectedImage:", selectedImage ? "Image exists" : "No image");
+  if (selectedImage) {
+    console.log("Image data starts with:", selectedImage.substring(0, 50));
+  }
 
   return (
     <Card className="p-6">
@@ -53,6 +56,7 @@ export function ImageUploader({ selectedImage, onImageSelect, onImageRemove }: I
                   src={selectedImage}
                   alt="Preview"
                   className="mx-auto max-h-48 w-full rounded object-contain"
+                  onError={(e) => console.error("Image failed to load:", e)}
                 />
               </div>
               <Button
