@@ -16,9 +16,9 @@ export async function configureFalAI() {
 export async function transformImageToVideo(base64Image: string, brandName: string): Promise<FalVideoResponse> {
   console.log('Using demo video...');
   
-  // Return a static demo video URL
+  // Return a publicly accessible demo video URL
   return {
-    video: "https://hhsjjvjrvnqssthprtma.supabase.co/storage/v1/object/public/videos/demo-influencer.mp4",
+    video: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     status: "completed"
   };
 }
