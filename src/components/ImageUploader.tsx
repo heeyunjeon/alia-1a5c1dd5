@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useCallback } from "react";
 
 interface ImageUploaderProps {
   selectedImage: string | null;
@@ -9,25 +10,53 @@ interface ImageUploaderProps {
 }
 
 export function ImageUploader({ selectedImage, onImageSelect, onImageRemove }: ImageUploaderProps) {
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        const event = {
+          target: {
+            files: files
+          }
+        } as unknown as React.ChangeEvent<HTMLInputElement>;
+        onImageSelect(event);
+      }
+    }
+  }, [onImageSelect]);
+
   return (
     <Card className="p-6">
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Upload Your Image</h2>
         <div 
-          className={`border-2 border-dashed rounded-lg p-8 text-center ${
-            selectedImage ? 'border-brandPrimary' : 'border-neutral-200'
+          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+            selectedImage ? 'border-brandPrimary bg-brandPrimary/5' : 'border-neutral-200 hover:border-brandPrimary/50'
           }`}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
         >
           {selectedImage ? (
             <div className="space-y-4">
-              <img
-                src={selectedImage}
-                alt="Preview"
-                className="mx-auto max-h-48 rounded object-contain"
-              />
+              <div className="relative w-full max-w-md mx-auto">
+                <img
+                  src={selectedImage}
+                  alt="Preview"
+                  className="mx-auto max-h-48 w-full rounded object-contain"
+                />
+              </div>
               <Button
                 variant="outline"
                 onClick={onImageRemove}
+                className="mt-4"
               >
                 Remove Image
               </Button>
