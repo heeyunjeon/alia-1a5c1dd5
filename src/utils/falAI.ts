@@ -28,7 +28,6 @@ export async function transformImageToVideo(base64Image: string, brandName: stri
       ? base64Image.split('base64,')[1] 
       : base64Image;
 
-    // Use the correct model ID format as required by FAL AI
     const result = await fal.run('fal-ai/svd', {
       input: {
         image_url: `data:image/jpeg;base64,${base64Data}`,
@@ -37,10 +36,7 @@ export async function transformImageToVideo(base64Image: string, brandName: stri
         guidance_scale: 7.5,
         motion_bucket_id: 180,
         cond_aug: 0.02,
-      },
-      subscribe: true, // Enable real-time updates
-      pollInterval: 5000, // Poll every 5 seconds
-      maxRetries: 80, // Maximum 80 retries (about 6.5 minutes with 5s interval)
+      }
     }) as FalAIResponse;
 
     console.log('FAL AI transformation completed:', result);
